@@ -26,7 +26,8 @@ export default Ember.Component.extend({
             var uploadURL = drop.options.url;
             var _send = xhr.send;
             xhr.send = function() {
-                if(uploadURL.indexOf('localhost') < 0) {
+                //"upload" is the endpoint for upload files
+                if(uploadURL.indexOf('upload') < 0) {
                     _send.call(xhr, file);
                 } else {
                     form.append("file", file, file.name);
