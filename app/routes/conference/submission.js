@@ -11,19 +11,20 @@ export default Ember.Route.extend({
 
     actions : {
         saveSubmission(newSubmission, drop, resolve) {
-                newSubmission.save().then((newRecord) => {
-                    drop.options.url = config.providers.osf.uploadsUrl + 
-                        newRecord.get('nodeId') +
-                        '/providers/osfstorage/?name=' + 
-                        drop.getQueuedFiles()[0].name;
-                    newRecord.get('contributor').then((authUser) =>{
-                        var authHeader = 'Bearer ' + authUser.get('token');
-                        drop.options.headers = {
-                            'Authorization' : authHeader
-                        };
-                        resolve();
-                    });      
-                });                     
+            newSubmission.save().then((newRecord) => {
+                drop.options.url = config.providers.osf.uploadsUrl +
+                    newRecord.get('nodeId') +
+                    '/providers/osfstorage/?kind=file&name=' +
+                    drop.getQueuedFiles()[0].name;
+
+                newRecord.get('contributor').then((authUser) =>{
+                    var authHeader = 'Bearer ' + authUser.get('token');
+                    drop.options.headers = {
+                        'Authorization' : authHeader
+                    };
+                    resolve();
+                });
+            });
         },
         cancelSubmission() {
             var sub_to_cancel = this.currentModel;
@@ -39,16 +40,10 @@ export default Ember.Route.extend({
             var nodeId = successData['data']['attributes']['resource']; //osf node's id
             var submissions = this.get('store').peekAll('submission');
             var relatedSubmission = submissions.findBy('nodeId', nodeId);
-            var newFile = this.get('store').createRecord('metafile', {
-                submission : relatedSubmission,
-                osfId : successData['data']['id'],
-                osfUrl : successData['data']['links']['download'],
-                fileName : successData['data']['attributes']['name']
-            });
 
-            newFile.save().then((file) => {
-                //do toast here
-                var submission = file.get('submission');
+            relatedSubmission.set('fileId', successData['data']['id']);
+            relatedSubmission.set('fileUrl', successData['data']['links']['download']);
+            relatedSubmission.save().then((submission) => {
                 var conf = submission.get('conference');
                 router.transitionTo('conference.index', conf.get('id'));
             });
