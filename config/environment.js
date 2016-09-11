@@ -18,6 +18,21 @@ module.exports = function(environment) {
             routeAfterAuthentication: 'index'
         },
 
+        torii: {
+            providers: {
+                "osf-oauth2": {
+                    "baseUrl": "https://staging-accounts.osf.io/oauth2/authorize",
+                    "responseType": "code",
+                    "clientId": "b32175579c7a4273ac663293a1c20d21",
+                    "redirectUrl": "http://localhost:4200/callback/",
+                    "scope": "osf.full_write",
+                    //"accessType": "online",
+                    //"approvalPrompt": "online"
+                }
+            }
+        },
+
+
         APP: {
             // Here you can pass flags/options to your application instance
             // when it is created
@@ -44,7 +59,7 @@ module.exports = function(environment) {
                 "uploadsUrl": "https://staging-files.osf.io/v1/resources/",
                 "uploadMultiple": false
             }
-        }
+        };
     }
 
     if (environment === 'test') {

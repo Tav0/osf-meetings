@@ -3,11 +3,12 @@ import Ember from 'ember';
 import config from '../config/environment';
 
 export default Ember.Component.extend({
+    session: Ember.inject.service('session'),
     store: Ember.inject.service('store'),
     fixed: true, /* holds status of navbar -> fixed or unfixed <- depending on mobile view or not */
     host: config.providers.osf.host, /* root URL for Osf redirection */
-    authenticated: false, /* authentication status */
-    user: null, /* current user metadata, initially empty */
+    //authenticated: false, /* authentication status */
+    //user: null, /* current user metadata, initially empty */
     showSearch: false, /* holds current view status of search dropdown */
 
         /*
@@ -19,28 +20,28 @@ export default Ember.Component.extend({
         *
         */
 
-    init: function() {
-        this._super(...arguments);
-        var self = this;
-        Ember.$.ajax({
-            url: config.providers.osfMeetings.currentUser,
-            dataType: 'json',
-            contentType: 'text/plain',
-            xhrFields: {
-                withCredentials: true,
-            }
-        }).then(function(loggedIn) {
-            if (!(loggedIn.errors)) {
-                self.set('authenticated', true);
-                self.set('user', loggedIn);
-                self.get('store').pushPayload('user', loggedIn);
-            }
-            else {
-                self.set('authenticated', false);
-                self.set('user', null);
-            }
-        });
-    },
+//    init: function() {
+//        this._super(...arguments);
+//        var self = this;
+//        Ember.$.ajax({
+//            url: config.providers.osfMeetings.currentUser,
+//            dataType: 'json',
+//            contentType: 'text/plain',
+//            xhrFields: {
+//                withCredentials: true,
+//            }
+//        }).then(function(loggedIn) {
+//            if (!(loggedIn.errors)) {
+//                self.set('authenticated', true);
+//                self.set('user', loggedIn);
+//                self.get('store').pushPayload('user', loggedIn);
+//            }
+//            else {
+//                self.set('authenticated', false);
+//                self.set('user', null);
+//            }
+//        });
+//    },
     actions: {
         /*
         *   search()
@@ -58,13 +59,20 @@ export default Ember.Component.extend({
          */
         /*********************************************************/
 
+        authenticateSession: function() {
+            this.get('session').authenticate('authenticator:osf-oauth2', 'osf-oauth2');
+        },
+
+        invalidateSession: function() {
+            this.get('session').invalidate();
+        },
         /*
         *   logout()
         *   sends action to the application level,
         *   subsequently logs out and removes user metadata
         */
-        logout: function() {
-            this.sendAction('logout');},
+//        logout: function() {
+//            this.sendAction('logout');},
         /*********************************************************/
 
         /*
@@ -72,8 +80,8 @@ export default Ember.Component.extend({
         *   sends action to the application level,
         *   subsequently logs in and adds user metadata
         */
-        login: function() {
-            this.sendAction('login');},
+//        login: function() {
+//            this.sendAction('login');},
         /*********************************************************/
         /*
         * unFix()

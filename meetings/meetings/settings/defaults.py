@@ -180,17 +180,6 @@ CORS_ORIGIN_WHITELIST = (
     'localhost:4200',
 )
 
-CORS_ALLOW_HEADERS = (
-    'x-requested-with',
-    'content-type',
-    'accept',
-    'origin',
-    'authorization',
-    'x-csrftoken',
-    'cache-control',
-)
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
